@@ -50,6 +50,14 @@ class LoginFragment : Fragment() {
             }
         })
 
+        viewModel.usernameError.observe(viewLifecycleOwner, Observer {
+            binding.tilUsername.error = it
+        })
+
+        viewModel.passwordError.observe(viewLifecycleOwner, Observer {
+            binding.tilPassword.error = it
+        })
+
         binding.btnLogin.setOnClickListener {
             val username = binding.txtUsername.text.toString()
             val password = binding.txtPassword.text.toString()

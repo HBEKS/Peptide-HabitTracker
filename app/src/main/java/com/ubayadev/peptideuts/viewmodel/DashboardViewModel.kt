@@ -12,6 +12,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     val habitsLD = MutableLiveData<ArrayList<Habit>>()
     val loadingLD = MutableLiveData<Boolean>()
+    val completedEvent = MutableLiveData<String?>()
 
     private val fileHelper = FileHelper(getApplication())
 
@@ -51,16 +52,26 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         if (index == -1) return
 
         val target = currentList[index]
-        val newProgress = (target.progress ?: 0) + delta
+        val oldProgress = target.progress ?: 0
         val goal = target.goal ?: 1
+        val newProgress = oldProgress + delta
 
         var finalProgress = newProgress
         if (finalProgress < 0) finalProgress = 0
         if (finalProgress > goal) finalProgress = goal
         target.progress = finalProgress
 
+        // Trigger snackbar saat habit baru saja menjadi tuntas
+        if (oldProgress < goal && finalProgress >= goal) {
+            completedEvent.value = target.name ?: "Habit"
+        }
+
         habitsLD.value = currentList
         saveToFile(currentList)
+    }
+
+    fun clearCompletedEvent() {
+        completedEvent.value = null
     }
 
     private fun saveToFile(list: ArrayList<Habit>) {

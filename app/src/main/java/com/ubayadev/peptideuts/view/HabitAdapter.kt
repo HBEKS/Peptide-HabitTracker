@@ -37,19 +37,20 @@ class HabitAdapter(
         val goal = habit.goal ?: 1
         val unit = habit.unit ?: ""
 
-        holder.binding.txtProgress.text = if (unit.isNotEmpty()) {
-            "$progress / $goal $unit"
-        } else {
-            "$progress / $goal"
-        }
+        val percent = if (goal > 0) (progress * 100 / goal) else 0
+        val baseText = if (unit.isNotEmpty()) "$progress / $goal $unit" else "$progress / $goal"
+        holder.binding.txtProgress.text = "$baseText ($percent%)"
+
         holder.binding.progressBar.max = goal
         holder.binding.progressBar.progress = progress
 
         val isCompleted = progress >= goal
         if (isCompleted) {
             holder.binding.txtStatus.text = "Completed"
+            holder.binding.txtStatus.setBackgroundResource(R.drawable.bg_status_completed)
         } else {
             holder.binding.txtStatus.text = "In Progress"
+            holder.binding.txtStatus.setBackgroundResource(R.drawable.bg_status_in_progress)
         }
 
         holder.binding.btnPlus.isEnabled = !isCompleted

@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.ubayadev.peptideuts.databinding.FragmentDashboardBinding
 import com.ubayadev.peptideuts.model.Habit
 import com.ubayadev.peptideuts.viewmodel.DashboardViewModel
@@ -30,13 +31,17 @@ class DashboardFragment : Fragment(), HabitAdapter.HabitClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
-        viewModel.refresh()
+        viewModel = ViewModelProvider(requireActivity()).get(DashboardViewModel::class.java)
 
         binding.recViewHabit.layoutManager = LinearLayoutManager(context)
         binding.recViewHabit.adapter = habitAdapter
 
         observeViewModel()
+
+        binding.refreshLayout.setOnRefreshListener {
+            viewModel.refresh()
+            binding.refreshLayout.isRefreshing = false
+        }
 
         binding.fabAdd.setOnClickListener {
             val action = DashboardFragmentDirections.actionCreateHabitFragment()
@@ -53,10 +58,10 @@ class DashboardFragment : Fragment(), HabitAdapter.HabitClickListener {
         viewModel.habitsLD.observe(viewLifecycleOwner, Observer {
             habitAdapter.updateHabitList(it)
             if (it.isEmpty()) {
-                binding.txtEmpty.visibility = View.VISIBLE
+                binding.layoutEmpty.visibility = View.VISIBLE
                 binding.recViewHabit.visibility = View.GONE
             } else {
-                binding.txtEmpty.visibility = View.GONE
+                binding.layoutEmpty.visibility = View.GONE
                 binding.recViewHabit.visibility = View.VISIBLE
             }
         })
@@ -67,6 +72,17 @@ class DashboardFragment : Fragment(), HabitAdapter.HabitClickListener {
                 binding.recViewHabit.visibility = View.GONE
             } else {
                 binding.progressLoad.visibility = View.GONE
+            }
+        })
+
+        viewModel.completedEvent.observe(viewLifecycleOwner, Observer { habitName ->
+            if (habitName != null) {
+                Snackbar.make(
+                    binding.root,
+                    "Selamat! Habit \"$habitName\" sudah tuntas hari ini.",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                viewModel.clearCompletedEvent()
             }
         })
     }

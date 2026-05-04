@@ -45,11 +45,10 @@ class CreateHabitFragment : Fragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerIcon.adapter = adapter
 
-        viewModel.errorMessage.observe(viewLifecycleOwner, Observer { errorMsg ->
-            if (errorMsg != null) {
-                Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
-            }
-        })
+        viewModel.nameError.observe(viewLifecycleOwner, Observer { binding.tilName.error = it })
+        viewModel.descriptionError.observe(viewLifecycleOwner, Observer { binding.tilDescription.error = it })
+        viewModel.goalError.observe(viewLifecycleOwner, Observer { binding.tilGoal.error = it })
+        viewModel.unitError.observe(viewLifecycleOwner, Observer { binding.tilUnit.error = it })
 
         viewModel.habitCreated.observe(viewLifecycleOwner, Observer { habit ->
             if (habit != null) {
