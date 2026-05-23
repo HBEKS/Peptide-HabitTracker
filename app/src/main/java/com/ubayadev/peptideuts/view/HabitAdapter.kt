@@ -47,10 +47,8 @@ class HabitAdapter(
         val isCompleted = progress >= goal
         if (isCompleted) {
             holder.binding.txtStatus.text = "Completed"
-            holder.binding.txtStatus.setBackgroundResource(R.drawable.bg_status_completed)
         } else {
             holder.binding.txtStatus.text = "In Progress"
-            holder.binding.txtStatus.setBackgroundResource(R.drawable.bg_status_in_progress)
         }
 
         holder.binding.btnPlus.isEnabled = !isCompleted

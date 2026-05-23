@@ -51,7 +51,7 @@
             android:id="@+id/txtStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_status_in_progress"
+            android:background="#E0E0E0"
             android:paddingHorizontal="10dp"
             android:paddingVertical="3dp"
             android:textColor="@android:color/white"

@@ -64,8 +64,7 @@
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:alpha="0.6"
-            android:contentDescription="Empty"
-            android:src="@drawable/ic_empty" />
+            android:contentDescription="Empty" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -92,8 +91,8 @@
         android:layout_margin="16dp"
         android:contentDescription="Add Habit"
         android:src="@drawable/ic_add"
-        app:tint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@android:color/black" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
