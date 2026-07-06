@@ -11,5 +11,7 @@ data class User(
     @ColumnInfo(name = "username")
     var username: String,
     @ColumnInfo(name = "password")
-    var password: String
+    var password: String,
+    @ColumnInfo(name = "is_login")
+    var isLogin: Boolean = false
 )

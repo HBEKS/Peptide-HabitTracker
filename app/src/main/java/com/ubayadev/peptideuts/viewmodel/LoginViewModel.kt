@@ -16,15 +16,29 @@ import kotlin.coroutines.CoroutineContext
 class LoginViewModel(application: Application) : AndroidViewModel(application), CoroutineScope{
     private val job = Job()
     val loginSuccess = MutableLiveData<Boolean>()
+    val autoLoginActive = MutableLiveData<Boolean>()
+
+    fun checkSession() {
+        launch {
+            val db = buildDb(getApplication())
+            val activeUser = db.userDao().checkActiveSession()
+            if (activeUser != null) {
+                autoLoginActive.postValue(true)
+            }
+        }
+    }
     fun loginUser(username: String, password: String){
         launch {
             val db = buildDb(getApplication())
             val user = db.userDao().login(username, password)
             if (user == null){
+                //user baru
                 val newUser = User(username = username, password = password)
                 db.userDao().insertUser(newUser)
                 loginSuccess.postValue(user != null)
             } else {
+                //user lama
+                db.userDao().updateSessionStatus(user.id, true)
                 loginSuccess.postValue(user != null)
             }
 
@@ -32,33 +46,4 @@ class LoginViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     override val coroutineContext: CoroutineContext get() = job + Dispatchers.IO
-
-    /*
-    val errorMessage = MutableLiveData<String>()
-
-    val usernameError = MutableLiveData<String?>()
-    val passwordError = MutableLiveData<String?>()
-
-    fun checkLogin(usernameInput: String, passwordInput: String) {
-        usernameError.value = null
-        passwordError.value = null
-
-        var hasError = false
-        if (usernameInput.isEmpty()) {
-            usernameError.value = "Username tidak boleh kosong"
-            hasError = true
-        }
-        if (passwordInput.isEmpty()) {
-            passwordError.value = "Password tidak boleh kosong"
-            hasError = true
-        }
-        if (hasError) return
-
-        // Logika Hardcode sesuai permintaan soal
-        if (usernameInput == "student" && passwordInput == "123") {
-            loginSuccess.value = true
-        } else {
-            errorMessage.value = "Username atau Password salah!"
-        }
-    }*/
 }

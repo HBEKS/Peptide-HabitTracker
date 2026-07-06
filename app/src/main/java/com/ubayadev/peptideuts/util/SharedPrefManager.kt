@@ -12,11 +12,11 @@ class SharedPrefManager(context: Context) {
         private const val KEY_USERNAME = "username"
     }
 
-    // Fungsi untuk menyimpan session saat login berhasil
+    // Fungsi untuk simpan session saat login berhasil
     fun saveSession(username: String) {
         editor.putBoolean(KEY_IS_LOGIN, true)
         editor.putString(KEY_USERNAME, username)
-        editor.apply() // Menggunakan apply agar berjalan secara asynchronous (background)
+        editor.apply()
     }
 
     // Fungsi untuk mengecek apakah user sudah login sebelumnya
@@ -24,7 +24,7 @@ class SharedPrefManager(context: Context) {
         return pref.getBoolean(KEY_IS_LOGIN, false)
     }
 
-    // Fungsi untuk mengambil username yang sedang login (jika nanti dibutuhkan di Dashboard)
+    // Fungsi untuk mengambil username yang sedang login
     fun getUsername(): String? {
         return pref.getString(KEY_USERNAME, null)
     }
