@@ -16,32 +16,18 @@ import kotlin.coroutines.CoroutineContext
 class LoginViewModel(application: Application) : AndroidViewModel(application), CoroutineScope{
     private val job = Job()
     val loginSuccess = MutableLiveData<Boolean>()
-    val autoLoginActive = MutableLiveData<Boolean>()
 
-    fun checkSession() {
-        launch {
-            val db = buildDb(getApplication())
-            val activeUser = db.userDao().checkActiveSession()
-            if (activeUser != null) {
-                autoLoginActive.postValue(true)
-            }
-        }
-    }
     fun loginUser(username: String, password: String){
         launch {
             val db = buildDb(getApplication())
             val user = db.userDao().login(username, password)
             if (user == null){
-                //user baru
                 val newUser = User(username = username, password = password)
                 db.userDao().insertUser(newUser)
                 loginSuccess.postValue(user != null)
             } else {
-                //user lama
-                db.userDao().updateSessionStatus(user.id, true)
                 loginSuccess.postValue(user != null)
             }
-
         }
     }
 

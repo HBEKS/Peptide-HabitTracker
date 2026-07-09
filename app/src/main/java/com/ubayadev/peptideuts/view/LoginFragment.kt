@@ -35,17 +35,15 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        /*prefManager = SharedPrefManager(requireContext())
+        prefManager = SharedPrefManager(requireContext())
         // Cek Auto-Login
         if (prefManager.isLoggedIn()) {
             val action = LoginFragmentDirections.actionDashboardFragment()
             findNavController().navigate(action)
             return
-        }*/
+        }
 
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
-
-        viewModel.checkSession()
         binding.btnLogin.setOnClickListener {
             val username = binding.txtUsername.text.toString()
             val password = binding.txtPassword.text.toString()
@@ -57,50 +55,13 @@ class LoginFragment : Fragment() {
     fun observeLoginViewModel(){
         viewModel.loginSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
             if (isSuccess) {
-                //val username = binding.txtUsername.text.toString()
-                //prefManager.saveSession(username)
+                val username = binding.txtUsername.text.toString()
+                prefManager.saveSession(username)
 
                 Toast.makeText(requireContext(), "Login Berhasil!", Toast.LENGTH_SHORT).show()
-                val action = LoginFragmentDirections.actionDashboardFragment()
-                findNavController().navigate(action)
-            }
-        })
-
-        viewModel.autoLoginActive.observe(viewLifecycleOwner, Observer { isActive ->
-            if (isActive) {
                 val action = LoginFragmentDirections.actionDashboardFragment()
                 findNavController().navigate(action)
             }
         })
     }
-
-    /*
-        viewModel.loginSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
-            if (isSuccess) {
-                Toast.makeText(requireContext(), "Login Berhasil!", Toast.LENGTH_SHORT).show()
-                val action = LoginFragmentDirections.actionDashboardFragment()
-                findNavController().navigate(action)
-            }
-        })
-
-        viewModel.errorMessage.observe(viewLifecycleOwner, Observer { errorMsg ->
-            if (errorMsg != null) {
-                Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show()
-            }
-        })
-
-        viewModel.usernameError.observe(viewLifecycleOwner, Observer {
-            binding.tilUsername.error = it
-        })
-
-        viewModel.passwordError.observe(viewLifecycleOwner, Observer {
-            binding.tilPassword.error = it
-        })
-
-        binding.btnLogin.setOnClickListener {
-            val username = binding.txtUsername.text.toString()
-            val password = binding.txtPassword.text.toString()
-
-            viewModel.checkLogin(username, password)
-        }*/
 }
