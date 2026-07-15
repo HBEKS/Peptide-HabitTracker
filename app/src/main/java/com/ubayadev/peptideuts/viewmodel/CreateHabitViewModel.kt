@@ -51,7 +51,7 @@ class CreateHabitViewModel : ViewModel() {
         if (hasError) return
 
         val newHabit = Habit(
-            id = null,
+            id = "",
             name = name,
             description = description,
             goal = goal,

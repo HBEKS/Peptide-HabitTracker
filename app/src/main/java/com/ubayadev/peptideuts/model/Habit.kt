@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "habit")
 data class Habit(
-    @PrimaryKey(autoGenerate = true)
-    var id: String?,
+    @PrimaryKey
+    var id: String,
     @ColumnInfo(name = "name")
     var name: String?,
     @ColumnInfo(name = "description")

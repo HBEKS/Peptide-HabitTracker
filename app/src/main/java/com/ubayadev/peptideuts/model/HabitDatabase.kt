@@ -5,10 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [User::class], version = 1, exportSchema = false) //belum masukin habit jadinya nanti ke version 2
+@Database(entities = [User::class, Habit::class], version = 2, exportSchema = false)
 abstract class HabitDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
+    abstract fun habitDao(): HabitDao
 
     companion object {
         const val DB_NAME = "habitdb"
@@ -22,7 +23,7 @@ abstract class HabitDatabase : RoomDatabase() {
                 context.applicationContext,
                 HabitDatabase::class.java,
                 DB_NAME
-            ).build()
+            ).fallbackToDestructiveMigration().build()
 
         operator fun invoke(context: Context): HabitDatabase = instance ?: synchronized(LOCK) {
             instance ?: buildDatabase(context).also {

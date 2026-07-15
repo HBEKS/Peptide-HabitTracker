@@ -3,79 +3,69 @@ package com.ubayadev.peptideuts.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.ubayadev.peptideuts.model.Habit
-import com.ubayadev.peptideuts.util.FileHelper
+import com.ubayadev.peptideuts.util.buildDb
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
-class DashboardViewModel(application: Application) : AndroidViewModel(application) {
+class DashboardViewModel(application: Application) : AndroidViewModel(application), CoroutineScope {
+
+    private val job = Job()
+    override val coroutineContext: CoroutineContext get() = job + Dispatchers.IO
 
     val habitsLD = MutableLiveData<ArrayList<Habit>>()
     val loadingLD = MutableLiveData<Boolean>()
     val completedEvent = MutableLiveData<String?>()
 
-    private val fileHelper = FileHelper(getApplication())
-
     fun refresh() {
         loadingLD.value = true
 
-        val jsonString = fileHelper.readFromFile()
-
-        if (jsonString.isEmpty()) {
-            habitsLD.value = arrayListOf()
-        } else {
-            try {
-                val sType = object : TypeToken<ArrayList<Habit>>() {}.type
-                val result = Gson().fromJson<ArrayList<Habit>>(jsonString, sType)
-                habitsLD.value = result ?: arrayListOf()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                habitsLD.value = arrayListOf()
-            }
+        launch {
+            val db = buildDb(getApplication())
+            val list = ArrayList(db.habitDao().selectAllHabit())
+            habitsLD.postValue(list)
+            loadingLD.postValue(false)
         }
-
-        loadingLD.value = false
     }
 
     fun addHabit(habit: Habit) {
-        val currentList = habitsLD.value ?: arrayListOf()
         habit.id = System.currentTimeMillis().toString()
         habit.progress = 0
-        currentList.add(habit)
-        habitsLD.value = currentList
-        saveToFile(currentList)
+
+        launch {
+            val db = buildDb(getApplication())
+            db.habitDao().insertHabit(habit)
+            val list = ArrayList(db.habitDao().selectAllHabit())
+            habitsLD.postValue(list)
+        }
     }
 
     fun updateProgress(habit: Habit, delta: Int) {
-        val currentList = habitsLD.value ?: return
-        val index = currentList.indexOfFirst { it.id == habit.id }
-        if (index == -1) return
+        val oldProgress = habit.progress ?: 0
+        val goal = habit.goal ?: 1
+        var newProgress = oldProgress + delta
 
-        val target = currentList[index]
-        val oldProgress = target.progress ?: 0
-        val goal = target.goal ?: 1
-        val newProgress = oldProgress + delta
+        if (newProgress < 0) newProgress = 0
+        if (newProgress > goal) newProgress = goal
+        habit.progress = newProgress
 
-        var finalProgress = newProgress
-        if (finalProgress < 0) finalProgress = 0
-        if (finalProgress > goal) finalProgress = goal
-        target.progress = finalProgress
+        launch {
+            val db = buildDb(getApplication())
+            db.habitDao().updateHabit(habit)
+            val list = ArrayList(db.habitDao().selectAllHabit())
+            habitsLD.postValue(list)
 
-        // Trigger snackbar saat habit baru saja menjadi tuntas
-        if (oldProgress < goal && finalProgress >= goal) {
-            completedEvent.value = target.name ?: "Habit"
+            // Trigger snackbar saat habit baru saja menjadi tuntas
+            if (oldProgress < goal && newProgress >= goal) {
+                completedEvent.postValue(habit.name ?: "Habit")
+            }
         }
-
-        habitsLD.value = currentList
-        saveToFile(currentList)
     }
 
     fun clearCompletedEvent() {
         completedEvent.value = null
-    }
-
-    private fun saveToFile(list: ArrayList<Habit>) {
-        val jsonString = Gson().toJson(list)
-        fileHelper.writeToFile(jsonString)
     }
 }
