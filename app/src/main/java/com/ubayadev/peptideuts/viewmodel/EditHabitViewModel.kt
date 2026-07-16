@@ -34,4 +34,11 @@ class EditHabitViewModel(application: Application) : AndroidViewModel(applicatio
             db.habitDao().updateHabit(habit)
         }
     }
+
+    fun deleteHabit(habit: Habit) {
+        launch {
+            val db = buildDb(getApplication())
+            db.habitDao().deleteHabit(habit)
+        }
+    }
 }

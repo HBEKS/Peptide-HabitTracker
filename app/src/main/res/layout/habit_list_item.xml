@@ -30,6 +30,7 @@
                 android:layout_height="48dp"
                 android:contentDescription="Habit Icon"
                 app:habitIcon="@{habit.iconName}"
+                app:iconTint="@{habit}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@android:drawable/ic_menu_compass" />
@@ -72,6 +73,7 @@
                 android:textSize="11sp"
                 android:textStyle="bold"
                 app:statusText="@{habit}"
+                app:statusBadgeBg="@{habit}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="In Progress" />
@@ -83,6 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 app:progressData="@{habit}"
+                app:progressColor="@{habit}"
                 app:layout_constraintEnd_toStartOf="@id/txtProgress"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imgIcon" />

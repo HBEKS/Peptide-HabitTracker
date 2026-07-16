@@ -23,4 +23,25 @@ interface HabitDao {
 
     @Delete
     fun deleteHabit(habitItem: Habit)
+
+    @Query("SELECT * FROM habit ORDER BY name ASC")
+    fun selectAllHabitOrdered(): List<Habit>
+
+    @Query("SELECT COUNT(*) FROM habit")
+    fun countAllHabit(): Int
+
+    @Query("SELECT COUNT(*) FROM habit WHERE progress >= goal")
+    fun countCompletedHabit(): Int
+
+    @Query("SELECT * FROM habit WHERE progress < goal")
+    fun selectInProgressHabit(): List<Habit>
+
+    @Query("SELECT * FROM habit WHERE progress >= goal")
+    fun selectCompletedHabit(): List<Habit>
+
+    @Query("SELECT * FROM habit WHERE name LIKE '%' || :keyword || '%'")
+    fun searchHabitByName(keyword: String): List<Habit>
+
+    @Query("DELETE FROM habit WHERE progress >= goal")
+    fun deleteCompletedHabit()
 }

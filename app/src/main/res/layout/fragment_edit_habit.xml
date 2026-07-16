@@ -142,13 +142,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:layout_marginBottom="16dp"
                 android:onClick="@{(v) -> listener.onSaveClick(v)}"
                 android:text="Save Changes"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/spinnerIcon" />
+
+            <Button
+                android:id="@+id/btnDeleteHabit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="#F44336"
+                android:onClick="@{(v) -> listener.onDeleteClick(v)}"
+                android:text="Delete Habit"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnSaveHabit" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

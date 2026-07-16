@@ -1,5 +1,6 @@
 package com.ubayadev.peptideuts.view
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import com.ubayadev.peptideuts.viewmodel.EditHabitViewModel
 
 interface EditHabitListener {
     fun onSaveClick(v: View)
+    fun onDeleteClick(v: View)
 }
 
 class EditHabitFragment : Fragment(), EditHabitListener {
@@ -83,5 +85,19 @@ class EditHabitFragment : Fragment(), EditHabitListener {
         viewModel.updateHabit(habit)
         Toast.makeText(requireContext(), "Habit berhasil diperbarui!", Toast.LENGTH_SHORT).show()
         findNavController().popBackStack()
+    }
+
+    override fun onDeleteClick(v: View) {
+        val habit = binding.habit ?: return
+        AlertDialog.Builder(requireContext())
+            .setTitle("Hapus Habit")
+            .setMessage("Yakin ingin menghapus \"${habit.name}\"?")
+            .setPositiveButton("Hapus") { _, _ ->
+                viewModel.deleteHabit(habit)
+                Toast.makeText(requireContext(), "Habit dihapus", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+            }
+            .setNegativeButton("Batal", null)
+            .show()
     }
 }
